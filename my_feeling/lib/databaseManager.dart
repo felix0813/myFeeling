@@ -1,10 +1,20 @@
 import 'dart:io';
 
+import 'package:flutter/animation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DBManager {
   static Database? db;
+  Future<int?> countPoem() async{
+    var dbpath = await getDatabasesPath();
+    var path = join(dbpath, 'my_db.db');
+    db = await openDatabase(path);
+    int? count =
+    Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM poems'));
+    await db!.close();
+    return count;
+  }
   Future<bool> addPoem(
       String title, String group, String content, String modifiedDate) async {
     var dbpath = await getDatabasesPath();
@@ -14,7 +24,6 @@ class DBManager {
     int? count =
         Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM poems'));
     print(count);
-    //Future<List<Map>> maps = db!.rawQuery("select max(id) from poems ") ;
     if (count != 0) {
       await db!.rawQuery("select max(id) from poems ").then((value) {
         value.forEach((item) {
@@ -32,11 +41,21 @@ class DBManager {
     await db!.execute(
         "insert into poems (id,_group,content,modifiedDate,title) values ($id,'未命名分组','$content','$modifiedDate','$title')");
     await db!.close();
-
     return false;
   }
 
-  void onCreate() async {
+  Future<List<Map<String,Object?>>> queryPoems() async{
+    var dbpath = await getDatabasesPath();
+    var path = join(dbpath, 'my_db.db');
+    db = await openDatabase(path);
+    List<Map<String,Object?>> list=[];
+    await db!.rawQuery("select max(id) from poems ").then((value) {
+      list.addAll(value);
+    });
+    return list;
+  }
+
+  Future<void> onCreate() async {
     var dbpath = await getDatabasesPath();
     var path = join(dbpath, 'my_db.db');
     if (!await Directory(dirname(path)).exists()) {

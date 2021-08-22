@@ -34,15 +34,28 @@ class EditState extends State<EditPoem> {
     });
   }
 
-  void insertPoem() {
-    db.onCreate();
+  Future<void> insertPoem() async {
+    await db.onCreate();
     if (title != null || content != null) {
       if (title == null) {
         title = "";
       } else if (content == null) {
         content = "";
       }
-      db.addPoem(title, "未命名分组", content, datetime.toString());
+      await db.addPoem(
+        title,
+        "未命名分组",
+        content,
+        datetime.year.toString() +
+            "年" +
+            datetime.month.toString() +
+            "月" +
+            datetime.day.toString() +
+            "日 " +
+            datetime.hour.toString() +
+            ":" +
+            datetime.minute.toString(),
+      );
     }
   }
 

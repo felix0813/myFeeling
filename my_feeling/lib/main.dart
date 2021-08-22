@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_feeling/pages/feeling.dart';
 import 'package:my_feeling/pages/others.dart';
-import 'package:my_feeling/pages/poem.dart';
+import 'package:my_feeling/pages/poemPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,7 +28,7 @@ class PageState extends State<MyApp> with SingleTickerProviderStateMixin {
       body: TabBarView(
         controller: controller,
         children: <Widget>[
-          Poem(),
+          PoemPage(),
           Feeling(),
           Others(),
         ],
