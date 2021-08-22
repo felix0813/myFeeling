@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DBManager {
   static Database? db;
-  Future<bool> addPoem(String title, String group, String content) async {
+  Future<bool> addPoem(String title, String group, String content,String modifiedDate) async {
     var dbpath = await getDatabasesPath();
     var path = join(dbpath, 'my_db.db');
     db = await openDatabase(path);
@@ -28,6 +28,7 @@ class DBManager {
     } else {
       id = 1;
     }
+    await db!.execute("insert into poems (id,_group,content,modifiedDate,title) values ($id,'未命名分组','$content','$modifiedDate','$title')");
     await db!.close();
 
     return false;

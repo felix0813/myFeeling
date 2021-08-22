@@ -42,7 +42,7 @@ class EditState extends State<EditPoem> {
       } else if (content == null) {
         content = "";
       }
-      db.addPoem(title, "未命名分组", content);
+      db.addPoem(title, "未命名分组", content,datetime.toString());
     }
   }
 
