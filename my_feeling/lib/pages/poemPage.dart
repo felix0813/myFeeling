@@ -73,33 +73,36 @@ class PoemPageState extends State<PoemPage> {
                     child: Column(
                       children: <Widget>[
                         Container(
-                          margin:EdgeInsets.fromLTRB(10, 10, 10, 5),
-                          child:Align(
-                          alignment:Alignment.centerLeft,
-                          child:Text(
-                          chooseTitle(index),
-                          maxLines: 1,
-                          style: TextStyle(fontSize: 18),
-                          textAlign: TextAlign.left,
+                          margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              chooseTitle(index),
+                              maxLines: 1,
+                              style: TextStyle(fontSize: 18),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
                         ),
-                        ),),
                         Container(
-                          margin:EdgeInsets.fromLTRB(10, 5, 10, 10),
-                            child:Align(
-                          alignment:Alignment.centerLeft,
-                          child:Text(
-                          list[index].datetime + "  " + list[index].content,
-                          maxLines: 1,
-                          style: TextStyle(fontSize: 12),
-                          textAlign: TextAlign.left,
-                        ),
-                        ))
+                            margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                list[index].datetime +
+                                    "  " +
+                                    list[index].content,
+                                maxLines: 1,
+                                style: TextStyle(fontSize: 12),
+                                textAlign: TextAlign.left,
+                              ),
+                            ))
                       ],
                     ),
                   );
                 },
               );
-              ;
+
           }
           //return null;
         },
