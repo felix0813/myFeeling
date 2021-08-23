@@ -6,15 +6,17 @@ import 'package:path/path.dart';
 
 class DBManager {
   static Database? db;
-  Future<int?> countPoem() async{
+  Future<int?> countPoem() async {
     var dbpath = await getDatabasesPath();
     var path = join(dbpath, 'my_db.db');
     db = await openDatabase(path);
     int? count =
-    Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM poems'));
+        Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM poems'));
+    print("countPoem:$count");
     await db!.close();
     return count;
   }
+
   Future<bool> addPoem(
       String title, String group, String content, String modifiedDate) async {
     var dbpath = await getDatabasesPath();
@@ -44,14 +46,15 @@ class DBManager {
     return false;
   }
 
-  Future<List<Map<String,Object?>>> queryPoems() async{
+  Future<List<Map<String, Object?>>> queryPoems() async {
     var dbpath = await getDatabasesPath();
     var path = join(dbpath, 'my_db.db');
     db = await openDatabase(path);
-    List<Map<String,Object?>> list=[];
-    await db!.rawQuery("select max(id) from poems ").then((value) {
+    List<Map<String, Object?>> list = [];
+    await db!.rawQuery("select * from poems order by id").then((value) {
       list.addAll(value);
     });
+    await db!.close();
     return list;
   }
 
