@@ -19,6 +19,7 @@ class PageState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     controller = new TabController(length: 3, vsync: this);
+    super.initState();
   }
 
   @override

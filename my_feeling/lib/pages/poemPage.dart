@@ -49,7 +49,6 @@ class PoemPageState extends State<PoemPage> {
       });
     });
     list = _list;
-
     print("got data");
   }
 
@@ -58,10 +57,7 @@ class PoemPageState extends State<PoemPage> {
       return AddPoem();
     }));
     print("update start");
-
     await db.queryPoems().then((value) {
-      print("getData:" + value.length.toString());
-
       List<Poem> _list = [];
       list = _list;
       value.forEach((element) {
@@ -82,7 +78,6 @@ class PoemPageState extends State<PoemPage> {
         counter = value!;
       });
     });
-
     print("update end");
   }
 
@@ -113,7 +108,8 @@ class PoemPageState extends State<PoemPage> {
       });
     });
   }
-  ScrollController offsetController=ScrollController();
+
+  ScrollController offsetController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -129,7 +125,11 @@ class PoemPageState extends State<PoemPage> {
               return Text('Press button to start.');
             case ConnectionState.active:
             case ConnectionState.waiting:
-              return Center(child:Text('Awaiting result...',style: TextStyle(fontSize: 36),));
+              return Center(
+                  child: Text(
+                'Awaiting result...',
+                style: TextStyle(fontSize: 36),
+              ));
             case ConnectionState.done:
               if (snapshot.hasError) return Text('Error: ${snapshot.error} ');
               return ListView.builder(
@@ -137,31 +137,46 @@ class PoemPageState extends State<PoemPage> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onPanDown: (details){
-                        x=details.globalPosition.dx;
-                        y=details.globalPosition.dy;
+                    onPanDown: (details) {
+                      x = details.globalPosition.dx;
+                      y = details.globalPosition.dy;
                     },
-                    onLongPress: ()async{
+                    onLongPress: () async {
                       var result;
-                      result=await showMenu(context: context,
-                          position: RelativeRect.fromLTRB(x, y-50, MediaQuery.of(context).size.width-x, 0),
-                          items: [PopupMenuItem(child: Text("删除",style: TextStyle(fontSize: 15),),value: "delete",),
-                            PopupMenuItem(child: Text("取消",style: TextStyle(fontSize: 15),),value: "cancel",)]
-                      );
-                      switch (result as String){
+                      result = await showMenu(
+                          context: context,
+                          position: RelativeRect.fromLTRB(x, y - 50,
+                              MediaQuery.of(context).size.width - x, 0),
+                          items: [
+                            PopupMenuItem(
+                              child: Text(
+                                "删除",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              value: "delete",
+                            ),
+                            PopupMenuItem(
+                              child: Text(
+                                "取消",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              value: "cancel",
+                            )
+                          ]);
+                      switch (result as String) {
                         case "delete":
-                          int ID=list[index].id;
-                          await db.deletePoem(ID);
-                          List<Poem>_list=[];
+                          int _id = list[index].id;
+                          await db.deletePoem(_id);
+                          List<Poem> _list = [];
                           _list.addAll(list);
                           _list.removeAt(index);
                           setState(() {
-                            list=_list;
+                            list = _list;
                           });
-                        break;
-                        case "cancel":break;
+                          break;
+                        case "cancel":
+                          break;
                       }
-
                     },
                     onTap: () {
                       editPoem(list[index]);
