@@ -4,11 +4,11 @@ class Poem {
   var group;
   var datetime;
   var id;
-  Poem(int Id, String Title, String Group, String Datetime, String Content) {
-    title = Title;
-    content = Content;
-    datetime = Datetime;
-    group = Group;
-    id = Id;
+  Poem(int _id, String _title, String _group, String _datetime, String _content) {
+    title = _title;
+    content = _content;
+    datetime = _datetime;
+    group = _group;
+    id = _id;
   }
 }
