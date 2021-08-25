@@ -11,8 +11,15 @@ class DBManager {
     int? count =
         Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM poems'));
     print("countPoem:$count");
-    await db!.close();
     return count;
+  }
+
+  Future<bool> deletePoem(int id) async {
+    var dbpath = await getDatabasesPath();
+    var path = join(dbpath, 'my_db.db');
+    db = await openDatabase(path);
+    db!.execute("delete from poems where id=$id");
+    return false;
   }
 
   Future<bool> addPoem(
@@ -40,7 +47,6 @@ class DBManager {
     }
     await db!.execute(
         "insert into poems (id,_group,content,modifiedDate,title) values ($id,'未命名分组','$content','$modifiedDate','$title')");
-    await db!.close();
     return false;
   }
 
@@ -49,10 +55,9 @@ class DBManager {
     var path = join(dbpath, 'my_db.db');
     db = await openDatabase(path);
     List<Map<String, Object?>> list = [];
-    await db!.rawQuery("select * from poems order by id").then((value) {
+    await db!.rawQuery("select * from poems order by id desc").then((value) {
       list.addAll(value);
     });
-    await db!.close();
     return list;
   }
 

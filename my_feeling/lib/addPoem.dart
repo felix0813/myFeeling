@@ -1,43 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_feeling/databaseManager.dart';
-import 'package:my_feeling/poem.dart';
 
-class EditPoem extends StatefulWidget {
-  Poem poem;
-  EditPoem({
-    required this.poem,
-  });
+class AddPoem extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new EditState(poem: poem);
+    return new AddState();
   }
 }
 
-class EditState extends State<EditPoem> {
-  EditState({
-    required this.poem,
-  });
-  Poem poem;
-  var _titleController;
-  var _contentController;
+class AddState extends State<AddPoem> {
   int id = -1;
   var title;
   DateTime datetime = DateTime.now().add(Duration(hours: 8));
   int length = 0;
   var content;
   DBManager db = DBManager();
-  @override
-  void initState() {
-    id = poem.id;
-    title = poem.title as String;
-    content = poem.content as String;
-    length = content.length;
-    _titleController = TextEditingController(text: title);
-    _contentController = TextEditingController(text: content);
-    super.initState();
-  }
-
   void lengthChanged(String s) {
     setState(() {
       length = s.length;
@@ -65,7 +43,6 @@ class EditState extends State<EditPoem> {
   }
 
   Future<void> insertPoem() async {
-    await db.onCreate();
     if (title != null || content != null) {
       if (title == null) {
         title = "";
@@ -100,30 +77,25 @@ class EditState extends State<EditPoem> {
               alignment: Alignment.bottomLeft,
               onPressed: () {
                 insertPoem();
-                Navigator.of(context).pop();
+                Navigator.pop(context, 1);
               },
               icon: Icon(Icons.arrow_back),
             ),
             margin: EdgeInsets.fromLTRB(0, 20, 310, 0),
           ),
-          Container(
-            //margin: EdgeInsets.fromLTRB(20, 60, 50, 0),
-            margin: EdgeInsets.fromLTRB(20, 0, 5, 0),
-            child: TextField(
-              controller: _titleController,
-              onChanged: (s) {
-                titleChanged(s);
-              },
-              autofocus: true,
-              maxLines: 1,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "标题",
-                icon: Icon(Icons.title),
-              ),
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 24),
+          TextField(
+            onChanged: (s) {
+              titleChanged(s);
+            },
+            autofocus: true,
+            maxLines: 1,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "标题",
+              icon: Icon(Icons.title),
             ),
+            textAlign: TextAlign.left,
+            style: TextStyle(fontSize: 24),
           ),
           Row(
             children: [
@@ -140,7 +112,6 @@ class EditState extends State<EditPoem> {
                       datetime.minute.toString(),
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                //margin: EdgeInsets.fromLTRB(20, 120, 0, 0),
                 margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
               ),
               Container(
@@ -148,32 +119,31 @@ class EditState extends State<EditPoem> {
                   length.toString() + "字",
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                //margin: EdgeInsets.fromLTRB(60, 120, 0, 0),
                 margin: EdgeInsets.fromLTRB(60, 0, 0, 0),
               )
             ],
           ),
           Container(
             height: MediaQuery.of(context).size.height - 144,
-            child: SingleChildScrollView(
-              child: TextField(
-                controller: _contentController,
-                onChanged: (str) {
-                  lengthChanged(str);
-                  contentChanged(str);
-                },
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "在此输入文字",
+            child: Expanded(
+              child: SingleChildScrollView(
+                child: TextField(
+                  onChanged: (str) {
+                    lengthChanged(str);
+                    contentChanged(str);
+                  },
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "在此输入文字",
+                  ),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18),
                 ),
-                textAlign: TextAlign.left,
-                style: TextStyle(fontSize: 18),
               ),
             ),
-            //margin: EdgeInsets.fromLTRB(10, 130, 5, 0),
-            margin: EdgeInsets.fromLTRB(20, 0, 5, 0),
+            margin: EdgeInsets.fromLTRB(10, 0, 5, 0),
           ),
         ],
       ),

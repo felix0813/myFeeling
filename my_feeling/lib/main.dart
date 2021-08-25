@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_feeling/pages/feeling.dart';
-import 'package:my_feeling/pages/others.dart';
+import 'package:my_feeling/pages/feelingPage.dart';
+import 'package:my_feeling/pages/othersPage.dart';
 import 'package:my_feeling/pages/poemPage.dart';
 
 void main() {
