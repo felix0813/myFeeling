@@ -109,7 +109,6 @@ class PoemPageState extends State<PoemPage> {
     });
   }
 
-  ScrollController offsetController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -122,12 +121,12 @@ class PoemPageState extends State<PoemPage> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-              return Text('Press button to start.');
-            case ConnectionState.active:
+              return Text('Waiting to start.');
+            case ConnectionState.active:return Text('In progress.');
             case ConnectionState.waiting:
               return Center(
                   child: Text(
-                'Awaiting result...',
+                'Loading...',
                 style: TextStyle(fontSize: 36),
               ));
             case ConnectionState.done:
@@ -182,6 +181,10 @@ class PoemPageState extends State<PoemPage> {
                       editPoem(list[index]);
                     },
                     child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        border: Border.all(width: 1,color: Colors.black)
+                      ),
                       margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                       child: Column(
                         children: <Widget>[

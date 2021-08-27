@@ -30,7 +30,7 @@ class PageState extends State<MyApp> with SingleTickerProviderStateMixin {
         controller: controller,
         children: <Widget>[
           PoemPage(),
-          Feeling(),
+          FeelingPage(),
           Others(),
         ],
       ),
