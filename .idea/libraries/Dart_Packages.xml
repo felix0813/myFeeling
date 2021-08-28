@@ -100,6 +100,13 @@
             </list>
           </value>
         </entry>
+        <entry key="fluttertoast">
+          <value>
+            <list>
+              <option value="$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/fluttertoast-8.0.8/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="js">
           <value>
             <list>
@@ -352,6 +359,7 @@
       <root url="file://$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/fake_async-1.2.0/lib" />
       <root url="file://$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/ffi-1.1.2/lib" />
       <root url="file://$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/file-6.1.2/lib" />
+      <root url="file://$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/fluttertoast-8.0.8/lib" />
       <root url="file://$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/js-0.6.3/lib" />
       <root url="file://$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/logging-1.0.1/lib" />
       <root url="file://$PROJECT_DIR$/../fluttersdk/flutter/.pub-cache/hosted/pub.flutter-io.cn/matcher-0.12.10/lib" />

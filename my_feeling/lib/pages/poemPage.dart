@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_feeling/databaseManager.dart';
 import 'package:my_feeling/addPoem.dart';
-
+import 'package:my_feeling/user.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mysql1/mysql1.dart' as mysql;
 import '../editPoem.dart';
 import '../poem.dart';
 
@@ -122,7 +124,8 @@ class PoemPageState extends State<PoemPage> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
               return Text('Waiting to start.');
-            case ConnectionState.active:return Text('In progress.');
+            case ConnectionState.active:
+              return Text('In progress.');
             case ConnectionState.waiting:
               return Center(
                   child: Text(
@@ -156,6 +159,13 @@ class PoemPageState extends State<PoemPage> {
                             ),
                             PopupMenuItem(
                               child: Text(
+                                "上传到云端",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              value: "upload",
+                            ),
+                            PopupMenuItem(
+                              child: Text(
                                 "取消",
                                 style: TextStyle(fontSize: 15),
                               ),
@@ -173,6 +183,38 @@ class PoemPageState extends State<PoemPage> {
                             list = _list;
                           });
                           break;
+                        case "upload":
+                          if (User.state == false) {
+                            Fluttertoast.showToast(
+                                msg: "请先登录",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16);
+                            break;
+                          } else {
+                            var settings = new mysql.ConnectionSettings(
+                                host:
+                                    'rm-wz903m77zaza3173jmo.mysql.rds.aliyuncs.com',
+                                port: 3306,
+                                user: 'felix',
+                                password: 'wzf_0813',
+                                db: 'my_db');
+                            var conn =
+                                await mysql.MySqlConnection.connect(settings);
+                            var curtitle = list[index].title;
+                            var curDate = list[index].datetime;
+                            var curContent = list[index].content;
+                            var curUserID = User.userID;
+                            var results = await conn.query(
+                                "insert into poems (title,modifiedDate,content,owner) values('$curtitle','$curDate','$curContent',$curUserID)");
+                            await conn.close();
+                            Fluttertoast.showToast(
+                                msg: "添加成功",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16);
+                            break;
+                          }
                         case "cancel":
                           break;
                       }
@@ -182,9 +224,8 @@ class PoemPageState extends State<PoemPage> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: Border.all(width: 1,color: Colors.black)
-                      ),
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          border: Border.all(width: 1, color: Colors.black)),
                       margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                       child: Column(
                         children: <Widget>[
