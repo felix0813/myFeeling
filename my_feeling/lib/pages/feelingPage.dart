@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
-import 'package:shared_preferences/shared_preferences.dart';
 import '../addFeeling.dart';
 import '../databaseManager.dart';
 import '../editFeeling.dart';

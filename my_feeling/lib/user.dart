@@ -1,7 +1,6 @@
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:mysql1/mysql1.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class User {
   static int userID = -1;
