@@ -1,9 +1,9 @@
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:my_feeling/poem.dart';
+import 'package:my_feeling/my_class/poem.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:mysql1/mysql1.dart';
 
-import 'feeling.dart';
+import '../my_class/feeling.dart';
 
 class User {
   static int userID = -1;

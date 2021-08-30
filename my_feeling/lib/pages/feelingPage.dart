@@ -4,8 +4,8 @@ import 'package:mysql1/mysql1.dart' as mysql;
 import '../addFeeling.dart';
 import '../databaseManager.dart';
 import '../editFeeling.dart';
-import '../feeling.dart';
-import '../user.dart';
+import '../my_class/feeling.dart';
+import '../account/user.dart';
 
 class FeelingPage extends StatefulWidget {
   @override

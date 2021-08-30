@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_feeling/databaseManager.dart';
-import 'package:my_feeling/poem.dart';
+import 'package:my_feeling/my_class/poem.dart';
 
 class EditPoem extends StatefulWidget {
   Poem poem;

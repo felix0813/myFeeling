@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:my_feeling/user.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:my_feeling/account/user.dart';
 
-class ChangePassword extends StatefulWidget {
+class RegisterUser extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ChangePasswordState();
+    return RegisterState();
   }
 }
 
-class ChangePasswordState extends State<ChangePassword> {
-  var original;
-  var newPassword;
+class RegisterState extends State<RegisterUser> {
+  var name;
+  var password;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: "修改密码",
+        title: "用户注册",
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
         home: Scaffold(
             appBar: AppBar(
-              title: Text("云端用户修改密码"),
+              title: Text("云端用户注册"),
               leading: IconButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -30,41 +31,40 @@ class ChangePasswordState extends State<ChangePassword> {
             body: Column(
               children: [
                 Text(
-                  "修改密码",
+                  "用户注册",
                   style: TextStyle(fontSize: 24),
                 ),
                 TextField(
                   maxLines: 1,
                   onChanged: (s) {
-                    original = s;
+                    name = s;
                   },
                   decoration: InputDecoration(
-                    labelText: "原密码",
-                    hintText: "原密码为8-12位",
-                    icon: Icon(Icons.password),
+                    labelText: "用户名",
+                    helperText: "用户名为3-10位",
+                    icon: Icon(Icons.person),
                   ),
                 ),
                 TextField(
                   maxLines: 1,
                   onChanged: (s) {
-                    newPassword = s;
+                    password = s;
                   },
                   decoration: InputDecoration(
-                    labelText: "新密码",
-                    hintText: "新密码为8-12位",
+                    labelText: "密码",
+                    helperText: "密码为8-12位",
                     icon: Icon(Icons.password),
                   ),
                 ),
                 TextButton(
-                    child: Text("确认修改"),
+                    child: Text("注册"),
                     onPressed: () async {
-                      await User.changePassword(original, newPassword)
-                          .then((value) {
+                      await User.register(name, password).then((value) {
                         if (value == true) {
-                          Navigator.pop(context);
+                          Navigator.of(context).pop();
                         }
                       });
-                    })
+                    }),
               ],
             )));
   }

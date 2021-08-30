@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:my_feeling/changePassword.dart';
-import 'package:my_feeling/registerUser.dart';
+import 'package:my_feeling/account/changePassword.dart';
+import 'package:my_feeling/account/registerUser.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:mysql1/mysql1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../loginUser.dart';
-import '../user.dart';
+import '../account/loginUser.dart';
+import '../account/user.dart';
 
 class Others extends StatefulWidget {
   @override

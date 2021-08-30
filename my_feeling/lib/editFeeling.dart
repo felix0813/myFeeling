@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_feeling/databaseManager.dart';
-import 'package:my_feeling/feeling.dart';
+import 'package:my_feeling/my_class/feeling.dart';
 
 class EditFeeling extends StatefulWidget {
   Feeling feeling;

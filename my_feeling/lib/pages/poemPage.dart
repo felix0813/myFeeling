@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_feeling/databaseManager.dart';
 import 'package:my_feeling/addPoem.dart';
-import 'package:my_feeling/user.dart';
+import 'package:my_feeling/account/user.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import '../editPoem.dart';
-import '../poem.dart';
+import '../my_class/poem.dart';
 
 class PoemPage extends StatefulWidget {
   @override
