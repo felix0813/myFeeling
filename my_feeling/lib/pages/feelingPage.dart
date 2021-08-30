@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../addFeeling.dart';
 import '../databaseManager.dart';
 import '../editFeeling.dart';
@@ -114,7 +115,11 @@ class FeelingPageState extends State<FeelingPage> {
         home: new Scaffold(
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(0, 255, 255, 0.55),
-        title: new Text("诗词"),
+        title: new Text("感受"),
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.cloud_download)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.delete))
+        ],
       ),
       body: FutureBuilder(
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -153,6 +158,13 @@ class FeelingPageState extends State<FeelingPage> {
                                 style: TextStyle(fontSize: 15),
                               ),
                               value: "delete",
+                            ),
+                            PopupMenuItem(
+                              child: Text(
+                                "上传到云端",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              value: "upload",
                             ),
                             PopupMenuItem(
                               child: Text(
@@ -195,7 +207,7 @@ class FeelingPageState extends State<FeelingPage> {
                             var curDate = list[index].datetime;
                             var curContent = list[index].content;
                             var curUserID = User.userID;
-                            var results = await conn.query(
+                            await conn.query(
                                 "insert into feelings (title,modifiedDate,content,owner) values('$curtitle','$curDate','$curContent',$curUserID)");
                             await conn.close();
                             Fluttertoast.showToast(

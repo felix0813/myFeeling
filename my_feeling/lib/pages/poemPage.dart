@@ -5,6 +5,7 @@ import 'package:my_feeling/addPoem.dart';
 import 'package:my_feeling/user.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../editPoem.dart';
 import '../poem.dart';
 
@@ -118,6 +119,10 @@ class PoemPageState extends State<PoemPage> {
       appBar: new AppBar(
         backgroundColor: Color.fromRGBO(0, 255, 255, 0.6),
         title: new Text("诗词"),
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.cloud_download)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.delete))
+        ],
       ),
       body: FutureBuilder(
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -205,7 +210,7 @@ class PoemPageState extends State<PoemPage> {
                             var curDate = list[index].datetime;
                             var curContent = list[index].content;
                             var curUserID = User.userID;
-                            var results = await conn.query(
+                            await conn.query(
                                 "insert into poems (title,modifiedDate,content,owner) values('$curtitle','$curDate','$curContent',$curUserID)");
                             await conn.close();
                             Fluttertoast.showToast(
