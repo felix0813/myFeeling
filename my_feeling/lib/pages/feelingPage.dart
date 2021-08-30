@@ -202,12 +202,12 @@ class FeelingPageState extends State<FeelingPage> {
                                 db: 'my_db');
                             var conn =
                                 await mysql.MySqlConnection.connect(settings);
-                            var curtitle = list[index].title;
+                            var curTitle = list[index].title;
                             var curDate = list[index].datetime;
                             var curContent = list[index].content;
-                            var curUserID = User.userID;
+                            var curUserName = User.userName;
                             await conn.query(
-                                "insert into feelings (title,modifiedDate,content,owner) values('$curtitle','$curDate','$curContent',$curUserID)");
+                                "insert into feelings (title,modifiedDate,content,owner) values('$curTitle','$curDate','$curContent','$curUserName')");
                             await conn.close();
                             Fluttertoast.showToast(
                                 msg: "添加成功",

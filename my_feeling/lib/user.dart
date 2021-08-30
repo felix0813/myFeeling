@@ -1,19 +1,16 @@
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_feeling/poem.dart';
 import 'package:mysql1/mysql1.dart' as mysql;
 import 'package:mysql1/mysql1.dart';
+
+import 'feeling.dart';
 
 class User {
   static int userID = -1;
   static String userName = '尚未登录';
   static bool state = false;
   static Future<bool> register(String name, String password) async {
-    var settings = new mysql.ConnectionSettings(
-        host: 'rm-wz903m77zaza3173jmo.mysql.rds.aliyuncs.com',
-        port: 3306,
-        user: 'felix',
-        password: 'wzf_0813',
-        db: 'my_db');
-    var conn = await mysql.MySqlConnection.connect(settings);
+    mysql.MySqlConnection conn = await connectAliyun();
     Results results = await conn
         .query("select count(*) as cnt from users where username='$name'");
 
@@ -48,13 +45,7 @@ class User {
   }
 
   static Future<bool> login(String name, String password) async {
-    var settings = new mysql.ConnectionSettings(
-        host: 'rm-wz903m77zaza3173jmo.mysql.rds.aliyuncs.com',
-        port: 3306,
-        user: 'felix',
-        password: 'wzf_0813',
-        db: 'my_db');
-    var conn = await mysql.MySqlConnection.connect(settings);
+    mysql.MySqlConnection conn = await connectAliyun();
     Results results = await conn.query(
         "select count(*) as cnt from users where username='$name' and userpassword='$password'");
     await conn.close();
@@ -85,13 +76,7 @@ class User {
   }
 
   static Future<bool> changePassword(String oldPass, String newPass) async {
-    var settings = new mysql.ConnectionSettings(
-        host: 'rm-wz903m77zaza3173jmo.mysql.rds.aliyuncs.com',
-        port: 3306,
-        user: 'felix',
-        password: 'wzf_0813',
-        db: 'my_db');
-    var conn = await mysql.MySqlConnection.connect(settings);
+    mysql.MySqlConnection conn = await connectAliyun();
     Results results = await conn.query(
         "select count(*) as cnt from users where username='$userName' and userpassword='$oldPass'");
     if (results.elementAt(0)[0] == 1) {
@@ -108,5 +93,62 @@ class User {
       await conn.close();
       return false;
     }
+  }
+
+  static Future<List<Poem>> getCloudPoem() async{
+    List<Poem> list=[];
+    if(state)
+    {
+      mysql.MySqlConnection conn = await connectAliyun();
+      Results results = await conn.query(
+          "select * from poems where username='$userName'");
+      results.forEach((element) {
+        var id=element.elementAt(0) as int;
+        var title=element.elementAt(1) as String;
+        var date=element.elementAt(2) as String;
+        var content=element.elementAt(3) as String;
+        list.add(Poem(id,title,"未命名分组",date,content));
+      });
+      return list;
+    }
+    else{
+      Fluttertoast.showToast(msg: "您还没有登录",toastLength: Toast.LENGTH_SHORT,gravity: ToastGravity.BOTTOM,
+          fontSize: 16);
+      return list;
+    }
+  }
+
+  static Future<List<Feeling>> getCloudFeeling() async{
+    List<Feeling> list=[];
+    if(state)
+    {
+      mysql.MySqlConnection conn = await connectAliyun();
+      Results results = await conn.query(
+          "select * from feelings where username='$userName'");
+      results.forEach((element) {
+        var id=element.elementAt(0) as int;
+        var title=element.elementAt(1) as String;
+        var date=element.elementAt(2) as String;
+        var content=element.elementAt(3) as String;
+        list.add(Feeling(id,title,"未命名分组",date,content));
+      });
+      return list;
+    }
+    else{
+      Fluttertoast.showToast(msg: "您还没有登录",toastLength: Toast.LENGTH_SHORT,gravity: ToastGravity.BOTTOM,
+          fontSize: 16);
+      return list;
+    }
+  }
+
+  static Future<mysql.MySqlConnection> connectAliyun() async {
+    var settings = new mysql.ConnectionSettings(
+        host: 'rm-wz903m77zaza3173jmo.mysql.rds.aliyuncs.com',
+        port: 3306,
+        user: 'felix',
+        password: 'wzf_0813',
+        db: 'my_db');
+    var conn = await mysql.MySqlConnection.connect(settings);
+    return conn;
   }
 }
