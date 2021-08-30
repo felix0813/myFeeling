@@ -5,28 +5,28 @@ import 'package:path/path.dart';
 class DBManager {
   static Database? db;
   Future<int?> countPoem() async {
-    var dbpath = await getDatabasesPath();
-    var path = join(dbpath, 'my_db.db');
-    db = await openDatabase(path);
+    await openDB();
     int? count =
         Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM poems'));
     print("countPoem:$count");
     return count;
   }
 
-  Future<bool> deletePoem(int id) async {
+  Future<void> openDB() async {
     var dbpath = await getDatabasesPath();
     var path = join(dbpath, 'my_db.db');
     db = await openDatabase(path);
+  }
+
+  Future<bool> deletePoem(int id) async {
+    await openDB();
     db!.execute("delete from poems where id=$id");
     return false;
   }
 
   Future<bool> addPoem(
       String title, String group, String content, String modifiedDate) async {
-    var dbpath = await getDatabasesPath();
-    var path = join(dbpath, 'my_db.db');
-    db = await openDatabase(path);
+    await openDB();
     int id = -1;
     int? count =
         Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM poems'));
@@ -51,9 +51,7 @@ class DBManager {
   }
 
   Future<List<Map<String, Object?>>> queryPoems() async {
-    var dbpath = await getDatabasesPath();
-    var path = join(dbpath, 'my_db.db');
-    db = await openDatabase(path);
+    await openDB();
     List<Map<String, Object?>> list = [];
     await db!.rawQuery("select * from poems order by id desc").then((value) {
       list.addAll(value);
@@ -76,9 +74,7 @@ class DBManager {
   }
 
   Future<int?> countFeeling() async {
-    var dbpath = await getDatabasesPath();
-    var path = join(dbpath, 'my_db.db');
-    db = await openDatabase(path);
+    await openDB();
     int? count = Sqflite.firstIntValue(
         await db!.rawQuery('SELECT COUNT(*) FROM feelings'));
     //print("countPoem:$count");
@@ -86,18 +82,14 @@ class DBManager {
   }
 
   Future<bool> deleteFeeling(int id) async {
-    var dbpath = await getDatabasesPath();
-    var path = join(dbpath, 'my_db.db');
-    db = await openDatabase(path);
+    await openDB();
     db!.execute("delete from feelings where id=$id");
     return false;
   }
 
   Future<bool> addFeeling(
       String title, String group, String content, String modifiedDate) async {
-    var dbpath = await getDatabasesPath();
-    var path = join(dbpath, 'my_db.db');
-    db = await openDatabase(path);
+    await openDB();
     int id = -1;
     int? count = Sqflite.firstIntValue(
         await db!.rawQuery('SELECT COUNT(*) FROM feelings'));
@@ -122,9 +114,7 @@ class DBManager {
   }
 
   Future<List<Map<String, Object?>>> queryFeelings() async {
-    var dbpath = await getDatabasesPath();
-    var path = join(dbpath, 'my_db.db');
-    db = await openDatabase(path);
+    await openDB();
     List<Map<String, Object?>> list = [];
     await db!.rawQuery("select * from feelings order by id desc").then((value) {
       list.addAll(value);
