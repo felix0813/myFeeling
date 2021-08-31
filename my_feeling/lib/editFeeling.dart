@@ -5,9 +5,11 @@ import 'package:my_feeling/my_class/feeling.dart';
 
 class EditFeeling extends StatefulWidget {
   Feeling feeling;
+
   EditFeeling({
     required this.feeling,
   });
+
   @override
   State<StatefulWidget> createState() {
     return new EditState(feeling: feeling);
@@ -18,6 +20,7 @@ class EditState extends State<EditFeeling> {
   EditState({
     required this.feeling,
   });
+
   Feeling feeling;
   var _titleController;
   var _contentController;
@@ -27,6 +30,7 @@ class EditState extends State<EditFeeling> {
   int length = 0;
   var content;
   DBManager db = DBManager();
+
   @override
   void initState() {
     id = feeling.id;

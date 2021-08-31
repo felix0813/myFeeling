@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:my_feeling/account/user.dart';
 
 class RegisterUser extends StatefulWidget {
@@ -12,6 +12,7 @@ class RegisterUser extends StatefulWidget {
 class RegisterState extends State<RegisterUser> {
   var name;
   var password;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

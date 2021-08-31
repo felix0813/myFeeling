@@ -9,6 +9,7 @@ class User {
   static int userID = -1;
   static String userName = '尚未登录';
   static bool state = false;
+
   static Future<bool> register(String name, String password) async {
     mysql.MySqlConnection conn = await connectAliyun();
     Results results = await conn
@@ -95,49 +96,81 @@ class User {
     }
   }
 
-  static Future<List<Poem>> getCloudPoem() async{
-    List<Poem> list=[];
-    if(state)
-    {
+  static Future<List<Poem>> getCloudPoem() async {
+    List<Poem> list = [];
+    if (state) {
       mysql.MySqlConnection conn = await connectAliyun();
-      Results results = await conn.query(
-          "select * from poems where username='$userName'");
+      Results results =
+          await conn.query("select * from poems where owner='$userName'");
       results.forEach((element) {
-        var id=element.elementAt(0) as int;
-        var title=element.elementAt(1) as String;
-        var date=element.elementAt(2) as String;
-        var content=element.elementAt(3) as String;
-        list.add(Poem(id,title,"未命名分组",date,content));
+        var id = element[0] as int;
+        var title = element[1].toString();
+        var date = element[2].toString();
+        var content = element[3].toString();
+        list.add(Poem(id, title, "未命名分组", date, content));
       });
       return list;
-    }
-    else{
-      Fluttertoast.showToast(msg: "您还没有登录",toastLength: Toast.LENGTH_SHORT,gravity: ToastGravity.BOTTOM,
+    } else {
+      Fluttertoast.showToast(
+          msg: "您还没有登录",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
           fontSize: 16);
       return list;
     }
   }
 
-  static Future<List<Feeling>> getCloudFeeling() async{
-    List<Feeling> list=[];
-    if(state)
-    {
+  static Future<List<Feeling>> getCloudFeeling() async {
+    List<Feeling> list = [];
+    if (state) {
       mysql.MySqlConnection conn = await connectAliyun();
-      Results results = await conn.query(
-          "select * from feelings where username='$userName'");
+      Results results =
+          await conn.query("select * from feelings where owner='$userName'");
       results.forEach((element) {
-        var id=element.elementAt(0) as int;
-        var title=element.elementAt(1) as String;
-        var date=element.elementAt(2) as String;
-        var content=element.elementAt(3) as String;
-        list.add(Feeling(id,title,"未命名分组",date,content));
+        var id = element[0] as int;
+        var title = element[1].toString();
+        var date = element[2].toString();
+        var content = element[3].toString();
+        list.add(Feeling(id, title, "未命名分组", date, content));
       });
       return list;
-    }
-    else{
-      Fluttertoast.showToast(msg: "您还没有登录",toastLength: Toast.LENGTH_SHORT,gravity: ToastGravity.BOTTOM,
+    } else {
+      Fluttertoast.showToast(
+          msg: "您还没有登录",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
           fontSize: 16);
       return list;
+    }
+  }
+
+  static Future<void> deleteCloudPoem(List<int> ids) async {
+    if (state) {
+      mysql.MySqlConnection conn = await connectAliyun();
+      for (int id in ids) {
+        await conn.query("delete from poems where id=$id");
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "您还没有登录",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 16);
+    }
+  }
+
+  static Future<void> deleteCloudFeeling(List<int> ids) async {
+    if (state) {
+      mysql.MySqlConnection conn = await connectAliyun();
+      for (int id in ids) {
+        await conn.query("delete from feelings where id=$id");
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "您还没有登录",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 16);
     }
   }
 

@@ -5,9 +5,11 @@ import 'package:my_feeling/my_class/poem.dart';
 
 class EditPoem extends StatefulWidget {
   Poem poem;
+
   EditPoem({
     required this.poem,
   });
+
   @override
   State<StatefulWidget> createState() {
     return new EditState(poem: poem);
@@ -18,6 +20,7 @@ class EditState extends State<EditPoem> {
   EditState({
     required this.poem,
   });
+
   Poem poem;
   var _titleController;
   var _contentController;
@@ -27,6 +30,7 @@ class EditState extends State<EditPoem> {
   int length = 0;
   var content;
   DBManager db = DBManager();
+
   @override
   void initState() {
     id = poem.id;

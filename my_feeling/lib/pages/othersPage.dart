@@ -34,6 +34,7 @@ class OthersState extends State<Others> {
 
   String username = User.userName;
   String buttonText = "";
+
   void getButtonText() {
     setState(() {
       if (User.state == true) {

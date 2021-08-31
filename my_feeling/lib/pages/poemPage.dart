@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:my_feeling/databaseManager.dart';
-import 'package:my_feeling/addPoem.dart';
-import 'package:my_feeling/account/user.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mysql1/mysql1.dart' as mysql;
+import 'package:my_feeling/account/user.dart';
+import 'package:my_feeling/addPoem.dart';
+import 'package:my_feeling/cloud/deletePoem.dart';
+import 'package:my_feeling/cloud/downloadPoem.dart';
+import 'package:my_feeling/databaseManager.dart';
+
 import '../editPoem.dart';
 import '../my_class/poem.dart';
 
@@ -22,12 +24,38 @@ class PoemPageState extends State<PoemPage> {
   var y;
 
   List<Poem> list = [];
+
   String chooseTitle(int i) {
     if (list[i].title.toString().length == 0) {
       return list[i].content.toString();
     } else {
       return list[i].title.toString();
     }
+  }
+
+  Future<bool?> showDeleteConfirmDialog1() {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("提示"),
+          content: Text("您确定要删除当前文件吗?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("取消"),
+              onPressed: () => Navigator.of(context).pop(false), // 关闭对话框
+            ),
+            TextButton(
+              child: Text("删除"),
+              onPressed: () {
+                //关闭对话框并返回true
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> getData() async {
@@ -109,6 +137,11 @@ class PoemPageState extends State<PoemPage> {
         list = _list;
       });
     });
+    await db.countPoem().then((value) {
+      setState(() {
+        counter = value!;
+      });
+    });
   }
 
   @override
@@ -119,8 +152,66 @@ class PoemPageState extends State<PoemPage> {
         backgroundColor: Color.fromRGBO(0, 255, 255, 0.6),
         title: new Text("诗词"),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.cloud_download)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.delete))
+          IconButton(
+              onPressed: () async {
+                if (!User.state) {
+                  Fluttertoast.showToast(
+                      msg: "您还没有登录",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      fontSize: 16);
+                } else if (User.state) {
+                  List<Poem> tmp = await User.getCloudPoem();
+                  await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                    return DownloadPoem(tmp);
+                  }));
+                  await db.queryPoems().then((value) {
+                    List<Poem> _list = [];
+                    list = _list;
+                    value.forEach((element) {
+                      Poem tmp = new Poem(
+                          element['id'] as int,
+                          element['title'] as String,
+                          element['_group'] as String,
+                          element['modifiedDate'] as String,
+                          element['content'] as String);
+                      _list.add(tmp);
+                    });
+                    setState(() {
+                      list = _list;
+                    });
+                  });
+                  await db.countPoem().then((value) {
+                    setState(() {
+                      counter = value!;
+                    });
+                  });
+                }
+              },
+              icon: Icon(Icons.cloud_download)),
+          IconButton(
+              onPressed: () async {
+                Fluttertoast.showToast(
+                    msg: "此功能为从云端删除数据",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    fontSize: 16);
+                if (!User.state) {
+                  Fluttertoast.showToast(
+                      msg: "您还没有登录",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      fontSize: 16);
+                } else {
+                  List<Poem> tmp = await User.getCloudPoem();
+                  await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                    return DeletePoem(tmp);
+                  }));
+                }
+              },
+              icon: Icon(Icons.delete))
         ],
       ),
       body: FutureBuilder(
@@ -178,13 +269,17 @@ class PoemPageState extends State<PoemPage> {
                           ]);
                       switch (result as String) {
                         case "delete":
-                          int _id = list[index].id;
-                          await db.deletePoem(_id);
-                          List<Poem> _list = [];
-                          _list.addAll(list);
-                          _list.removeAt(index);
-                          setState(() {
-                            list = _list;
+                          await showDeleteConfirmDialog1().then((value) async {
+                            if (value == true) {
+                              int _id = list[index].id;
+                              await db.deletePoem(_id);
+                              List<Poem> _list = [];
+                              _list.addAll(list);
+                              _list.removeAt(index);
+                              setState(() {
+                                list = _list;
+                              });
+                            }
                           });
                           break;
                         case "upload":
@@ -196,15 +291,7 @@ class PoemPageState extends State<PoemPage> {
                                 fontSize: 16);
                             break;
                           } else {
-                            var settings = new mysql.ConnectionSettings(
-                                host:
-                                    'rm-wz903m77zaza3173jmo.mysql.rds.aliyuncs.com',
-                                port: 3306,
-                                user: 'felix',
-                                password: 'wzf_0813',
-                                db: 'my_db');
-                            var conn =
-                                await mysql.MySqlConnection.connect(settings);
+                            var conn = await User.connectAliyun();
                             var curTitle = list[index].title;
                             var curDate = list[index].datetime;
                             var curContent = list[index].content;

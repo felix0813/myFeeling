@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mysql1/mysql1.dart' as mysql;
+import 'package:my_feeling/cloud/deleteFeeling.dart';
+import 'package:my_feeling/cloud/downloadFeeling.dart';
+
+import '../account/user.dart';
 import '../addFeeling.dart';
 import '../databaseManager.dart';
 import '../editFeeling.dart';
 import '../my_class/feeling.dart';
-import '../account/user.dart';
 
 class FeelingPage extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class FeelingPageState extends State<FeelingPage> {
   var y;
 
   List<Feeling> list = [];
+
   String chooseTitle(int i) {
     if (list[i].title.toString().length == 0) {
       return list[i].content.toString();
@@ -106,6 +109,36 @@ class FeelingPageState extends State<FeelingPage> {
         list = _list;
       });
     });
+    await db.countFeeling().then((value) {
+      setState(() {
+        counter = value!;
+      });
+    });
+  }
+
+  Future<bool?> showDeleteConfirmDialog1() {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("提示"),
+          content: Text("您确定要删除当前文件吗?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("取消"),
+              onPressed: () => Navigator.of(context).pop(false), // 关闭对话框
+            ),
+            TextButton(
+              child: Text("删除"),
+              onPressed: () {
+                //关闭对话框并返回true
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -116,8 +149,66 @@ class FeelingPageState extends State<FeelingPage> {
         backgroundColor: Color.fromRGBO(0, 255, 255, 0.55),
         title: new Text("感受"),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.cloud_download)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.delete))
+          IconButton(
+              onPressed: () async {
+                if (!User.state) {
+                  Fluttertoast.showToast(
+                      msg: "您还没有登录",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      fontSize: 16);
+                } else if (User.state) {
+                  List<Feeling> tmp = await User.getCloudFeeling();
+                  await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                    return DownloadFeeling(tmp);
+                  }));
+                  await db.queryFeelings().then((value) {
+                    List<Feeling> _list = [];
+                    list = _list;
+                    value.forEach((element) {
+                      Feeling tmp = new Feeling(
+                          element['id'] as int,
+                          element['title'] as String,
+                          element['_group'] as String,
+                          element['modifiedDate'] as String,
+                          element['content'] as String);
+                      _list.add(tmp);
+                    });
+                    setState(() {
+                      list = _list;
+                    });
+                  });
+                  await db.countFeeling().then((value) {
+                    setState(() {
+                      counter = value!;
+                    });
+                  });
+                }
+              },
+              icon: Icon(Icons.cloud_download)),
+          IconButton(
+              onPressed: () async {
+                Fluttertoast.showToast(
+                    msg: "此功能为从云端删除数据",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    fontSize: 16);
+                if (!User.state) {
+                  Fluttertoast.showToast(
+                      msg: "您还没有登录",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      fontSize: 16);
+                } else {
+                  List<Feeling> tmp = await User.getCloudFeeling();
+                  await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                    return DeleteFeeling(tmp);
+                  }));
+                }
+              },
+              icon: Icon(Icons.delete))
         ],
       ),
       body: FutureBuilder(
@@ -175,13 +266,17 @@ class FeelingPageState extends State<FeelingPage> {
                           ]);
                       switch (result as String) {
                         case "delete":
-                          int _id = list[index].id;
-                          await db.deleteFeeling(_id);
-                          List<Feeling> _list = [];
-                          _list.addAll(list);
-                          _list.removeAt(index);
-                          setState(() {
-                            list = _list;
+                          await showDeleteConfirmDialog1().then((value) async {
+                            if (value == true) {
+                              int _id = list[index].id;
+                              await db.deleteFeeling(_id);
+                              List<Feeling> _list = [];
+                              _list.addAll(list);
+                              _list.removeAt(index);
+                              setState(() {
+                                list = _list;
+                              });
+                            }
                           });
                           break;
                         case "upload":
@@ -193,15 +288,7 @@ class FeelingPageState extends State<FeelingPage> {
                                 fontSize: 16);
                             break;
                           } else {
-                            var settings = new mysql.ConnectionSettings(
-                                host:
-                                    'rm-wz903m77zaza3173jmo.mysql.rds.aliyuncs.com',
-                                port: 3306,
-                                user: 'felix',
-                                password: 'wzf_0813',
-                                db: 'my_db');
-                            var conn =
-                                await mysql.MySqlConnection.connect(settings);
+                            var conn = await User.connectAliyun();
                             var curTitle = list[index].title;
                             var curDate = list[index].datetime;
                             var curContent = list[index].content;

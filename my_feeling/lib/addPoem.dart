@@ -16,6 +16,7 @@ class AddState extends State<AddPoem> {
   int length = 0;
   var content;
   DBManager db = DBManager();
+
   void lengthChanged(String s) {
     setState(() {
       length = s.length;

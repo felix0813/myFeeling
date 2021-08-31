@@ -11,6 +11,7 @@ class ChangePassword extends StatefulWidget {
 class ChangePasswordState extends State<ChangePassword> {
   var original;
   var newPassword;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

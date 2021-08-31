@@ -4,6 +4,7 @@ class Poem {
   var group;
   var datetime;
   var id;
+
   Poem(int _id, String _title, String _group, String _datetime,
       String _content) {
     title = _title;

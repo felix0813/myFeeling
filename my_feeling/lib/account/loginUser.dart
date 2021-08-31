@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_feeling/account/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginUser extends StatefulWidget {
   var name;
   var password;
+
   LoginUser(this.name, this.password);
+
   @override
   State<StatefulWidget> createState() {
     return LoginState(name, password);
@@ -20,7 +22,9 @@ class LoginState extends State<LoginUser> {
   var password;
   var initName;
   var initPassword;
+
   LoginState(this.initName, this.initPassword);
+
   @override
   void initState() {
     setState(() {
