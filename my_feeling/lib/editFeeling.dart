@@ -26,7 +26,7 @@ class EditState extends State<EditFeeling> {
   var _contentController;
   int id = -1;
   var title;
-  DateTime datetime = DateTime.now().add(Duration(hours: 8));
+  DateTime datetime = DateTime.now();
   int length = 0;
   var content;
   DBManager db = DBManager();
@@ -95,7 +95,13 @@ class EditState extends State<EditFeeling> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: ()async{
+      insertFeeling();
+      Navigator.pop(context);
+      return true;
+    },
+    child:Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
         children: [
@@ -181,6 +187,6 @@ class EditState extends State<EditFeeling> {
           ),
         ],
       ),
-    );
+    ));
   }
 }

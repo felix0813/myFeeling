@@ -12,7 +12,7 @@ class AddFeeling extends StatefulWidget {
 class AddState extends State<AddFeeling> {
   int id = -1;
   var title;
-  DateTime datetime = DateTime.now().add(Duration(hours: 8));
+  DateTime datetime = DateTime.now();
   int length = 0;
   var content;
   DBManager db = DBManager();
@@ -69,7 +69,13 @@ class AddState extends State<AddFeeling> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: ()async{
+        insertFeeling();
+        Navigator.pop(context,1);
+        return true;
+      },
+        child:Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
         children: [
@@ -126,7 +132,6 @@ class AddState extends State<AddFeeling> {
           ),
           Container(
             height: MediaQuery.of(context).size.height - 144,
-            child: Expanded(
               child: SingleChildScrollView(
                 child: TextField(
                   onChanged: (str) {
@@ -143,11 +148,10 @@ class AddState extends State<AddFeeling> {
                   style: TextStyle(fontSize: 18),
                 ),
               ),
-            ),
             margin: EdgeInsets.fromLTRB(10, 0, 5, 0),
           ),
         ],
       ),
-    );
+    ));
   }
 }
