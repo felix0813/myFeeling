@@ -8,6 +8,7 @@ import '../addFeeling.dart';
 import '../databaseManager.dart';
 import '../editFeeling.dart';
 import '../my_class/feeling.dart';
+import '../searchFeeling.dart';
 
 class FeelingPage extends StatefulWidget {
   @override
@@ -227,8 +228,32 @@ class FeelingPageState extends State<FeelingPage> {
             case ConnectionState.done:
               if (snapshot.hasError) return Text('Error: ${snapshot.error} ');
               return ListView.builder(
-                itemCount: counter,
+                itemCount: counter+1,
                 itemBuilder: (BuildContext context, int index) {
+                  if (index == 0) {
+                    return GestureDetector(
+                        onTap: () {
+                          searchFeeling();
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.black12,
+                              border:
+                              Border.all(width: 1, color: Colors.black12),
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10))),
+                          margin: EdgeInsets.fromLTRB(15, 15, 15, 5),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search),
+                              Text(
+                                " 搜索感受",
+                              )
+                            ],
+                          ),
+                        ));
+                  }
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onPanDown: (details) {
@@ -268,11 +293,11 @@ class FeelingPageState extends State<FeelingPage> {
                         case "delete":
                           await showDeleteConfirmDialog1().then((value) async {
                             if (value == true) {
-                              int _id = list[index].id;
+                              int _id = list[index-1].id;
                               await db.deleteFeeling(_id);
                               List<Feeling> _list = [];
                               _list.addAll(list);
-                              _list.removeAt(index);
+                              _list.removeAt(index-1);
                               setState(() {
                                 list = _list;
                               });
@@ -289,9 +314,9 @@ class FeelingPageState extends State<FeelingPage> {
                             break;
                           } else {
                             var conn = await User.connectAliyun();
-                            var curTitle = list[index].title;
-                            var curDate = list[index].datetime;
-                            var curContent = list[index].content;
+                            var curTitle = list[index-1].title;
+                            var curDate = list[index-1].datetime;
+                            var curContent = list[index-1].content;
                             var curUserName = User.userName;
                             await conn.query(
                                 "insert into feelings (title,modifiedDate,content,owner) values('$curTitle','$curDate','$curContent','$curUserName')");
@@ -308,7 +333,7 @@ class FeelingPageState extends State<FeelingPage> {
                       }
                     },
                     onTap: () {
-                      editFeeling(list[index]);
+                      editFeeling(list[index-1]);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -322,7 +347,7 @@ class FeelingPageState extends State<FeelingPage> {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                chooseTitle(index),
+                                chooseTitle(index-1),
                                 maxLines: 1,
                                 style: TextStyle(fontSize: 18),
                                 textAlign: TextAlign.left,
@@ -334,9 +359,9 @@ class FeelingPageState extends State<FeelingPage> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  list[index].datetime +
+                                  list[index-1].datetime +
                                       "  " +
-                                      list[index].content,
+                                      list[index-1].content,
                                   maxLines: 1,
                                   style: TextStyle(fontSize: 12),
                                   textAlign: TextAlign.left,
@@ -361,4 +386,32 @@ class FeelingPageState extends State<FeelingPage> {
       ),
     ));
   }
+  Future<void> searchFeeling() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return SearchFeeling();
+    }));
+    await db.queryFeelings().then((value) {
+      print("getData:" + value.length.toString());
+      setState(() {
+        List<Feeling> _list = [];
+        list = _list;
+        value.forEach((element) {
+          Feeling tmp = new Feeling(
+              element['id'] as int,
+              element['title'] as String,
+              element['_group'] as String,
+              element['modifiedDate'] as String,
+              element['content'] as String);
+          _list.add(tmp);
+        });
+        list = _list;
+      });
+    });
+    await db.countFeeling().then((value) {
+      setState(() {
+        counter = value!;
+      });
+    });
+  }
 }
+

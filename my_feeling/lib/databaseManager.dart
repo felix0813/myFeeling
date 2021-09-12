@@ -61,6 +61,30 @@ class DBManager {
     return list;
   }
 
+  Future<List<Map<String, Object?>>> queryPoemsByString(String str) async {
+    await openDB();
+    List<Map<String, Object?>> list = [];
+    await db!
+        .rawQuery(
+            "select * from poems where title like '%$str%' or content like '%$str%' order by id desc")
+        .then((value) {
+      list.addAll(value);
+    });
+    return list;
+  }
+
+  Future<List<Map<String, Object?>>> queryFeelingsByString(String str) async {
+    await openDB();
+    List<Map<String, Object?>> list = [];
+    await db!
+        .rawQuery(
+        "select * from feelings where title like '%$str%' or content like '%$str%' order by id desc")
+        .then((value) {
+      list.addAll(value);
+    });
+    return list;
+  }
+
   Future<void> onCreate() async {
     var dbpath = await getDatabasesPath();
     var path = join(dbpath, 'my_db.db');

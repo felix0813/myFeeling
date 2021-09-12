@@ -6,6 +6,7 @@ import 'package:my_feeling/addPoem.dart';
 import 'package:my_feeling/cloud/deletePoem.dart';
 import 'package:my_feeling/cloud/downloadPoem.dart';
 import 'package:my_feeling/databaseManager.dart';
+import 'package:my_feeling/searchPoem.dart';
 
 import '../editPoem.dart';
 import '../my_class/poem.dart';
@@ -230,8 +231,32 @@ class PoemPageState extends State<PoemPage> {
             case ConnectionState.done:
               if (snapshot.hasError) return Text('Error: ${snapshot.error} ');
               return ListView.builder(
-                itemCount: counter,
+                itemCount: counter + 1,
                 itemBuilder: (BuildContext context, int index) {
+                  if (index == 0) {
+                    return GestureDetector(
+                        onTap: () {
+                          searchPoem();
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.black12,
+                              border:
+                                  Border.all(width: 1, color: Colors.black12),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          margin: EdgeInsets.fromLTRB(15, 15, 15, 5),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search),
+                              Text(
+                                " 搜索诗词",
+                              )
+                            ],
+                          ),
+                        ));
+                  }
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onPanDown: (details) {
@@ -271,11 +296,11 @@ class PoemPageState extends State<PoemPage> {
                         case "delete":
                           await showDeleteConfirmDialog1().then((value) async {
                             if (value == true) {
-                              int _id = list[index].id;
+                              int _id = list[index - 1].id;
                               await db.deletePoem(_id);
                               List<Poem> _list = [];
                               _list.addAll(list);
-                              _list.removeAt(index);
+                              _list.removeAt(index - 1);
                               setState(() {
                                 list = _list;
                               });
@@ -292,9 +317,9 @@ class PoemPageState extends State<PoemPage> {
                             break;
                           } else {
                             var conn = await User.connectAliyun();
-                            var curTitle = list[index].title;
-                            var curDate = list[index].datetime;
-                            var curContent = list[index].content;
+                            var curTitle = list[index - 1].title;
+                            var curDate = list[index - 1].datetime;
+                            var curContent = list[index - 1].content;
                             var curUserName = User.userName;
                             await conn.query(
                                 "insert into poems (title,modifiedDate,content,owner) values('$curTitle','$curDate','$curContent','$curUserName')");
@@ -311,7 +336,7 @@ class PoemPageState extends State<PoemPage> {
                       }
                     },
                     onTap: () {
-                      editPoem(list[index]);
+                      editPoem(list[index - 1]);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -325,7 +350,7 @@ class PoemPageState extends State<PoemPage> {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                chooseTitle(index),
+                                chooseTitle(index - 1),
                                 maxLines: 1,
                                 style: TextStyle(fontSize: 18),
                                 textAlign: TextAlign.left,
@@ -337,9 +362,9 @@ class PoemPageState extends State<PoemPage> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  list[index].datetime +
+                                  list[index - 1].datetime +
                                       "  " +
-                                      list[index].content,
+                                      list[index - 1].content,
                                   maxLines: 1,
                                   style: TextStyle(fontSize: 12),
                                   textAlign: TextAlign.left,
@@ -363,5 +388,33 @@ class PoemPageState extends State<PoemPage> {
         child: Icon(Icons.add),
       ),
     ));
+  }
+
+  Future<void> searchPoem() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return SearchPoem();
+    }));
+    await db.queryPoems().then((value) {
+      print("getData:" + value.length.toString());
+      setState(() {
+        List<Poem> _list = [];
+        list = _list;
+        value.forEach((element) {
+          Poem tmp = new Poem(
+              element['id'] as int,
+              element['title'] as String,
+              element['_group'] as String,
+              element['modifiedDate'] as String,
+              element['content'] as String);
+          _list.add(tmp);
+        });
+        list = _list;
+      });
+    });
+    await db.countPoem().then((value) {
+      setState(() {
+        counter = value!;
+      });
+    });
   }
 }
